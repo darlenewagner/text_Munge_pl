@@ -5,7 +5,7 @@ use strict;
 while(<STDIN>)
 {
     $_ =~ s/(\d|\†|\‡|\§|\*)//g;
-    
+    $_ =~ s/,,/,/g;
     print;
 
 }
