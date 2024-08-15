@@ -1,7 +1,9 @@
 #!/usr/bin/perl
 use strict;
 use Getopt::Long;
-## Assume input BlastN output file is tab-delimited with 'virus' or '10239' in 17th column
+## Input BlastN file is tab-delimited with 'virus' or '10239' in 17th column
+## Output format option from original BlastN command had 18 columns:
+## -outfmt '6 qseqid pident length qlen slen mismatch gapopen qstart qend sstart send evalue bitscore sgi sacc staxids sblastnames stitle'
 
 ## Alphanumeric Genbank or RefSeq expected
 my $accession = '';
