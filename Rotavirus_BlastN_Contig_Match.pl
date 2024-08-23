@@ -1,6 +1,7 @@
 #!/usr/bin/perl
 use strict;
 use Getopt::Long;
+## Adapted to search for BlastN matches to rotavirus or influenzavirus segments.
 ## Input BlastN file is tab-delimited with 'virus' or '10239' in 17th column
 ## Output format option from original BlastN command had 18 columns:
 ## -outfmt '6 qseqid pident length qlen slen mismatch gapopen qstart qend sstart send evalue bitscore sgi sacc staxids sblastnames stitle'
@@ -39,7 +40,7 @@ if($help)
        exit;
    } 
 
-if($accession =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
+if($accession =~ /^[A-Z][a-z]+\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+\.?\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
   {
     $virusName = $ARGV[0];
      if($verbose)
@@ -94,7 +95,7 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		 }
 	     }
 	}   
-      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
+      elsif($virusName =~ /^[A-Z][a-z]+\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+\.?\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
         {
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
