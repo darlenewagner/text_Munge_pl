@@ -82,8 +82,9 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
         { 
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
-	     {
-		 my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+	    {
+		chomp $line[17];
+		 my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
 		 if($newLine =~ m/$accession/)
 		  {
 		     print $newLine;
@@ -99,7 +100,8 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
 	    {
-		my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+		chomp $line[17];
+		my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
 		if($newLine =~ m/$virusName/)
 		{
                    print $newLine;     
@@ -114,8 +116,9 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
         {
 	    @line = split(/\t/, $_);
       	    if($line[16] =~ /virus|10239/)
-          {
-      	my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+	    {
+		chomp $line[17];
+      	my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
       		if($newLine =~ m/$highConsequenceStr/)
       		{
                     push @HighConsequenceArray, $newLine;
@@ -142,3 +145,4 @@ if($advanced)
 	  $i++;
       }
   }
+

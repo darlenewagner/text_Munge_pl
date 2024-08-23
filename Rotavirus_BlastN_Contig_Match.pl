@@ -40,7 +40,7 @@ if($help)
        exit;
    } 
 
-if($accession =~ /^[A-Z][a-z]+\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+\.?\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
+if($accession =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
   {
     $virusName = $ARGV[0];
      if($verbose)
@@ -83,8 +83,9 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
         { 
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
-	     {
-		 my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+	    {
+		chomp $line[17];
+		 my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
 		 if($newLine =~ m/$accession/)
 		  {
 		     print $newLine;
@@ -95,15 +96,17 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		 }
 	     }
 	}   
-      elsif($virusName =~ /^[A-Z][a-z]+\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+\.?\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
+      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
         {
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
 	    {
-		my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+		chomp $line[17];
+		my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
 		if($newLine =~ m/$virusName/)
 		{
-                   print $newLine;     
+		    print $newLine;
+		
 		}
 		elsif(($newLine =~ m/$highConsequenceStr/) && ($advanced))
 	        {
@@ -115,8 +118,9 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
         {
 	    @line = split(/\t/, $_);
       	    if($line[16] =~ /virus|10239/)
-          {
-      	my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17];
+	    {
+		chomp $line[17];
+        	my $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
       		if($newLine =~ m/$highConsequenceStr/)
       		{
                     push @HighConsequenceArray, $newLine;
