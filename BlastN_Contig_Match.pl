@@ -17,7 +17,7 @@ my $virusName = '';
 ## For searching when $accession or $virusName are not supplied
 my $highConsequenceStr = qr/(HIV\-(1|2)\sisolate\s.+,\scomplete\sgenome|Human\simmunodeficiency\svirus\s(1|2)\sproviral)/;
 my @HighConsequenceArray = ();
-my %Sortable = {};
+my %Sortable;
 
 $accession = $ARGV[0];
 
@@ -58,6 +58,15 @@ if($accession =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|
 	    print "Search by species/strain name:\n";
 	    print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
+  }
+elsif($accession =~ /^Human\srotavirus\s(A|B|C|D|E|F|G)/)
+  {
+      $virusName = $ARGV[0];
+      if($verbose)
+      {
+	   print "Search Human rotavirus without categorization of segments:\n";
+	   print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+      }
   }
 elsif($accession =~ /^[A-Z][A-Z][A-Z0-9]+\.?[0-9]$/)
   {
@@ -108,7 +117,14 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		 }
 		if($newLine =~ m/$accession/)
 		  {
-		     print $newLine;
+               	    if($sortIt)
+		      {
+			  $Sortable{$line[14]}{$line[2]} = $newLine;
+		      }
+		    else
+		      {
+			  print $newLine;
+		      }
 		  }
 		 elsif(($newLine =~ m/$highConsequenceStr/) && ($advanced))
 	          {
@@ -116,7 +132,7 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		 }
 	     }
 	}   
-      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
+      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/ || $virusName =~ /Human\srotavirus\s(A|B|C|D|E|F|G)/)
         {
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
@@ -133,7 +149,16 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		 }
 		if($newLine =~ m/$virusName/)
 		{
-                   print $newLine;     
+		    #print $newLine;
+		   if($sortIt)
+		      {
+			  $Sortable{$line[14]}{$line[2]} = $newLine;
+		      }
+		    else
+		      {
+                         print $newLine
+		      }
+
 		}
 		elsif(($newLine =~ m/$highConsequenceStr/) && ($advanced))
 	        {
@@ -175,6 +200,20 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
       #	  die "Search string too short, lacks sufficient information, or --highConsequence option not provided...$!";
       #}
   }
+
+## Option '--sort' with search string included
+
+if($sortIt && !$advanced)
+{
+    foreach my $acc (sort keys %Sortable)
+    {
+	foreach my $aln (sort { $b <=> $a } keys %{ $Sortable{$acc}} )
+	{
+	    print $Sortable{$acc}{$aln};
+	}
+    }
+    
+}
 
 
 ## When option '--highConsequence' is used, no search string is needed
