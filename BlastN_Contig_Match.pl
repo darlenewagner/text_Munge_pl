@@ -1,6 +1,8 @@
 #!/usr/bin/perl
 use strict;
 use Getopt::Long;
+use warnings;
+use Data::Dumper;
 ## Input BlastN file is tab-delimited with 'virus' or '10239' in 17th column
 ## Output format option from original BlastN command had 18 columns:
 ## -outfmt '6 qseqid pident length qlen slen mismatch gapopen qstart qend sstart send evalue bitscore sgi sacc staxids sblastnames stitle'
@@ -15,10 +17,12 @@ my $virusName = '';
 ## For searching when $accession or $virusName are not supplied
 my $highConsequenceStr = qr/(HIV\-(1|2)\sisolate\s.+,\scomplete\sgenome|Human\simmunodeficiency\svirus\s(1|2)\sproviral)/;
 my @HighConsequenceArray = ();
-my @SortingArray = ();
+my %Sortable = {};
 
 $accession = $ARGV[0];
 
+
+## Help section and usage
 my $help = '';
 my $verbose = '';
 my $sortIt = '';
@@ -37,11 +41,14 @@ if($help)
        print "\n<------------------------------------------------- Options -------------------------------------------------->\n";
        print "ACCESSION or VIRUS NAME STR#, Search key (required)\n";
        print "--verbose,                    Output column headers (optional)\n";
-       print "--sort,                       Sort output by MatchID (NCBI Accession)\n";
-       print "--highConsequence,            Search for HIV-1 or other high-consequence pathogens (optional)\n";
+       print "--sort,                       Sort output by MatchID (NCBI Accession) and AlnLength\n";
+       print "--highConsequence,            Search for HIV-1 or other high-consequence pathogens (no search key needed)\n";
        print "--help,                       Display this help message\n\n";
        exit;
    } 
+
+
+## Determine input string '$accession' type
 
 if($accession =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)
   {
@@ -74,9 +81,11 @@ elsif(!$advanced)
   }
 
 
+## Iterate through blastN output
+## Must be tabular format with:
+## -outfmt '6 qseqid pident length qlen slen mismatch gapopen qstart qend sstart send evalue bitscore sgi sacc staxids sblastnames stitle'
 
 
-my %Sortable = {};
 my $i = 0;
 my @line = ();
 
@@ -138,15 +147,27 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
       	    if($line[16] =~ /virus|10239/)
 	    {
 		chomp $line[17];
-      	my $newLine = "'".$line[0]."'\t'".$line[1]."'\t'".$line[2]."'\t'".$line[14]."'\t'".$line[17]."'\n";
+		my $newLine = '';
+
+		if($verbose)
+		 {
+                    $newLine = $line[0]."\t".$line[1]."\t".$line[2]."\t".$line[14]."\t".$line[17]."\n";
+		 }
+		else
+		 {
+ 		    $newLine = "'".$line[0]."'\t'".$line[1]."'\t'".$line[2]."'\t'".$line[14]."'\t'".$line[17]."'\n";
+                 }
+		
       		if($newLine =~ m/$highConsequenceStr/)
       		{
                     push @HighConsequenceArray, $newLine;
+                    
+		    if($sortIt)
+		      {
+			  $Sortable{$line[14]}{$line[2]} = $newLine;
+		      }
       		}
-		elsif($sortIt)
-		{
-                    push @SortingArray, $newLine;
-		}
+
       	    }
 	}
       #else
@@ -154,6 +175,9 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
       #	  die "Search string too short, lacks sufficient information, or --highConsequence option not provided...$!";
       #}
   }
+
+
+## When option '--highConsequence' is used, no search string is needed
 
 if($advanced)
   {
@@ -163,10 +187,23 @@ if($advanced)
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
       my $i = 0;
-      foreach(@HighConsequenceArray)
-      {
-	  print $HighConsequenceArray[$i];
-	  $i++;
-      }
+      if($sortIt)
+        {
+	    foreach my $acc (sort keys %Sortable)
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $Sortable{$acc}} )
+		{
+		    print $Sortable{$acc}{$aln};
+		}
+	    }
+        }
+      else
+       { 
+          foreach(@HighConsequenceArray)
+           {
+	       print $HighConsequenceArray[$i];
+	       $i++;
+           }
+       }
   }
 
