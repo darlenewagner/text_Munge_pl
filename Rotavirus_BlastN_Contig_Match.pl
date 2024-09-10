@@ -15,12 +15,12 @@ my $accession = '';
 my $virusName = '';
 
 ## For searching when $accession or $virusName are not supplied
-my $highConsequenceStr = qr/(HIV\-(1|2)\sisolate\s.+,\scomplete\sgenome|Human\simmunodeficiency\svirus\s(1|2)\sproviral)/;
+my $rotavirusStr = qr/(Human\srotavirus\s(A|B|C|D|E|F|G)|Rotavirus\s(A|B|C|D|E|F|G))/;
 my @HighConsequenceArray = ();
 my %Sortable;
 
 ## A Hash of arrays for organizing rotavirus segment matches
-my %RotavirusSegments = { 'segment_1' => [],
+my %RotavirusSegments = ( 'segment_1' => [],
 			  'segment_2' => [],
 			  'segment_3' => [],
 			  'segment_4' => [],
@@ -31,7 +31,7 @@ my %RotavirusSegments = { 'segment_1' => [],
 			  'segment_9' => [],
 			  'segment_10' => [],
 			  'segment_11' => []
-                      };
+                      );
 
 $accession = $ARGV[0];
 
@@ -51,12 +51,12 @@ GetOptions(
 
 if($help)
    {
-       print "\nUsage: BlastN_Contig_Match.pl [ACCESSION or \"VIRUS NAME STR.\"] --verbose --highConsequence < BlastN-Output.tsv\n";
+       print "\nUsage: BlastN_Contig_Match.pl --rotavirus --sort < BlastN-Output.tsv\n";
        print "\n<------------------------------------------------- Options -------------------------------------------------->\n";
        print "ACCESSION or VIRUS NAME STR#, Search key (required)\n";
        print "--verbose,                    Output column headers (optional)\n";
        print "--sort,                       Sort output by MatchID (NCBI Accession) and AlnLength\n";
-       print "--rotavirus,                  Search for HIV-1 or other high-consequence pathogens (no search key needed)\n";
+       print "--rotavirus,                  Search Human rotavirus or rotavirus (no search key needed)\n";
        print "--help,                       Display this help message\n\n";
        exit;
    } 
@@ -140,13 +140,13 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 			  print $newLine;
 		      }
 		  }
-		 elsif(($newLine =~ m/$highConsequenceStr/) && ($rotavirus))
+		 elsif(($newLine =~ m/$rotavirusStr/) && ($rotavirus))
 	          {
 		    push @HighConsequenceArray, $newLine;
 		 }
 	     }
 	}   
-      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/ || $virusName =~ /Human\srotavirus\s(A|B|C|D|E|F|G)/)
+      elsif($virusName =~ /^[A-Z][a-z]+\s+([A-Za-z][A-Za-z0-9]?[0-9]?\s)?([A-Za-z0-9]+(-|_)?[A-Za-z0-9]+|sp|str|strain)\.?\s+([A-Z]\s)?[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/)  
         {
 	    @line = split(/\t/, $_);
 	    if($line[16] =~ /virus|10239/)
@@ -174,13 +174,13 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		      }
 
 		}
-		elsif(($newLine =~ m/$highConsequenceStr/) && ($rotavirus))
+		elsif(($newLine =~ m/$rotavirusStr/) && ($rotavirus))
 	        {
                    push @HighConsequenceArray, $newLine;
 		}
 	    }
      	}
-      elsif(($rotavirus) && ($virusName !~ /^[A-Z][a-z]+\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+\.?\s+[A-Za-z0-9]+(-|_)?[A-Za-z0-9]+/) && ($accession !~ /^[A-Z][A-Z][A-Z0-9]+\.?[0-9]$/) && ($accession !~ /^N(C|T|X|Z)_[0-9]+\.?[0-9]$/))
+      elsif($rotavirus)
         {
 	    @line = split(/\t/, $_);
       	    if($line[16] =~ /virus|10239/)
@@ -197,7 +197,7 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
  		    $newLine = "'".$line[0]."'\t'".$line[1]."'\t'".$line[2]."'\t'".$line[14]."'\t'".$line[17]."'\n";
                  }
 		
-      		if($newLine =~ m/$highConsequenceStr/)
+      		if($newLine =~ m/$rotavirusStr/)
       		{
                     push @HighConsequenceArray, $newLine;
                     
@@ -236,7 +236,7 @@ if($rotavirus)
   {
       if($verbose)
         {
-           print "\n<------- Search for High-Consequence Viral Pathogen ------->\n";
+           print "\n<------- Search for Rotavirus Segments ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
       my $i = 0;
@@ -252,7 +252,7 @@ if($rotavirus)
         }
       else
       {
-         die "Sort option required for rotavirus search --\n";
+         die "Sort option required for rotavirus search.\n";
       }
   }
 
