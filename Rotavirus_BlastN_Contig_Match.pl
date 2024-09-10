@@ -19,19 +19,8 @@ my $rotavirusStr = qr/(Human\srotavirus\s(A|B|C|D|E|F|G)|Rotavirus\s(A|B|C|D|E|F
 my @HighConsequenceArray = ();
 my %Sortable;
 
-## A Hash of arrays for organizing rotavirus segment matches
-my %RotavirusSegments = ( 'segment_1' => [],
-			  'segment_2' => [],
-			  'segment_3' => [],
-			  'segment_4' => [],
-			  'segment_5' => [],
-			  'segment_6' => [],
-			  'segment_7' => [],
-			  'segment_8' => [],
-			  'segment_9' => [],
-			  'segment_10' => [],
-			  'segment_11' => []
-                      );
+## A Hash of Hashes for organizing rotavirus segment matches
+my %RotavirusSegments = ();
 
 $accession = $ARGV[0];
 
@@ -199,12 +188,17 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 		
       		if($newLine =~ m/$rotavirusStr/)
       		{
-                    push @HighConsequenceArray, $newLine;
+                    #push @HighConsequenceArray, $newLine;
                     
-		    if($sortIt)
+		    if($sortIt && ($newLine =~ /segment\s1(\s|,)/i))
 		      {
-			  $Sortable{$line[14]}{$line[2]} = $newLine;
+			  $RotavirusSegments{'segment_1'}{$line[14]}{$line[2]} = $newLine;
+			  
 		      }
+		    if($sortIt && ($newLine =~ /segment\s2(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_2'}{$line[14]}{$line[2]} = $newLine;
+                    }
       		}
 
       	    }
@@ -233,23 +227,37 @@ if($sortIt && !$rotavirus)
 ## When option '--highConsequence' is used, no search string is needed
 
 if($rotavirus)
-  {
+{
+    if($sortIt)
+    {
       if($verbose)
         {
-           print "\n<------- Search for Rotavirus Segments ------->\n";
+           print "\n<------- Search for Rotavirus Segment 1 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
       my $i = 0;
-      if($sortIt)
-        {
-	    foreach my $acc (sort keys %Sortable)
+      
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_1'} })
 	    {
-		foreach my $aln (sort { $b <=> $a } keys %{ $Sortable{$acc}} )
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_1'}{$acc}} )
 		{
-		    print $Sortable{$acc}{$aln};
+		    print $RotavirusSegments{'segment_1'}{$acc}{$aln};
 		}
 	    }
-        }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 2 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
+     
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_2'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_2'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_2'}{$acc}{$aln};
+		}
+	    }
+      }
       else
       {
          die "Sort option required for rotavirus search.\n";
