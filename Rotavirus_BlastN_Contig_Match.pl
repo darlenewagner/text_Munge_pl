@@ -294,6 +294,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_2'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 3 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
          
           foreach my $acc (sort keys %{ $RotavirusSegments{'segment_3'} })
 	    {
@@ -302,6 +307,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_3'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 4 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_4'} })
 	    {
@@ -310,6 +320,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_4'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 5 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_5'} })
 	    {
@@ -318,6 +333,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_5'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 6 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_6'} })
 	    {
@@ -326,6 +346,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_6'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 7 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_7'} })
 	    {
@@ -334,6 +359,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_7'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 8 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_8'} })
 	    {
@@ -342,6 +372,11 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_8'}{$acc}{$aln};
 		}
 	    }
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 9 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
            
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_9'} })
 	    {
@@ -350,14 +385,31 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_9'}{$acc}{$aln};
 		}
 	    }
-           
-	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_10'} })
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 10 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
+      if( exists $RotavirusSegments{'segment_10'} )
 	    {
-		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_10'}{$acc}} )
-		{
-		    print $RotavirusSegments{'segment_10'}{$acc}{$aln};
-		}
+   	        foreach my $acc (sort keys %{ $RotavirusSegments{'segment_10'} })
+	        {
+		    foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_10'}{$acc}} )
+		    {
+		        print $RotavirusSegments{'segment_10'}{$acc}{$aln};
+		    }
+	        }
 	    }
+      else
+	    {
+		 print "Segment 10 not found.\n";		
+	    }
+      
+      if($verbose)
+        {
+           print "\n<------- Search for Rotavirus Segment 11 ------->\n";
+           print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
+	}
 
             if( exists $RotavirusSegments{'segment_11'} )
               {
