@@ -195,10 +195,47 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
 			  $RotavirusSegments{'segment_1'}{$line[14]}{$line[2]} = $newLine;
 			  
 		      }
-		    if($sortIt && ($newLine =~ /segment\s2(\s|,)/i))
+		    elsif($sortIt && ($newLine =~ /segment\s2(\s|,)/i))
 		    {
                         $RotavirusSegments{'segment_2'}{$line[14]}{$line[2]} = $newLine;
                     }
+		    elsif($sortIt && ($newLine =~ /segment\s3(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_3'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s4(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_4'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s5(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_5'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s6(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_6'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s7(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_7'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s8(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_8'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s9(\s|,)/i))
+		    {
+                        $RotavirusSegments{'segment_9'}{$line[14]}{$line[2]} = $newLine;
+                    }
+		    elsif($sortIt && ($newLine =~ /segment\s10(\s|,)/i))
+		      {
+			  $RotavirusSegments{'segment_10'}{$line[14]}{$line[2]} = $newLine;
+		      }
+		    elsif($sortIt && ($newLine =~ /segment\s11(\s|,)/i))
+		      {
+			  $RotavirusSegments{'segment_11'}{$line[14]}{$line[2]} = $newLine;
+    	              }
+
       		}
 
       	    }
@@ -257,7 +294,90 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_2'}{$acc}{$aln};
 		}
 	    }
-      }
+         
+          foreach my $acc (sort keys %{ $RotavirusSegments{'segment_3'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_3'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_3'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_4'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_4'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_4'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_5'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_5'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_5'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_6'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_6'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_6'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_7'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_7'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_7'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_8'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_8'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_8'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_9'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_9'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_9'}{$acc}{$aln};
+		}
+	    }
+           
+	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_10'} })
+	    {
+		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_10'}{$acc}} )
+		{
+		    print $RotavirusSegments{'segment_10'}{$acc}{$aln};
+		}
+	    }
+
+            if( exists $RotavirusSegments{'segment_11'} )
+              {
+	       foreach my $acc (sort keys %{ $RotavirusSegments{'segment_11'} })
+	         { 
+		   foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_11'}{$acc}} )
+		    {
+		       print $RotavirusSegments{'segment_11'}{$acc}{$aln};
+		    }
+		
+	         }
+	      }
+            else
+             {
+		 print "Segment 11 not found.\n";
+	     }
+	
+
+
+    }
       else
       {
          die "Sort option required for rotavirus search.\n";
