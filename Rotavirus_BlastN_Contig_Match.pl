@@ -190,48 +190,48 @@ while(<STDIN>)  ## Read BlastN file, use mode according to which string is nonem
       		{
                     #push @HighConsequenceArray, $newLine;
                     
-		    if($sortIt && ($newLine =~ /segment\s1(\s|,)/i))
+		    if($sortIt && ( ($newLine =~ /segment\s1(\s|,)/i) || ($newLine =~ /RNA\-dependent\sRNA\spolymerase\sVP1\s\(VP1\)\sgene/) || ($newLine =~ /VP1\sgene\sfor\sVP1\sprotein/)))
 		      {
 			  $RotavirusSegments{'segment_1'}{$line[14]}{$line[2]} = $newLine;
 			  
 		      }
-		    elsif($sortIt && ($newLine =~ /segment\s2(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s2(\s|,)/i) || ($newLine =~ /(core\scapsid\sprotein|RNA\sviral\sgenome\sbinding)\sVP2\s\(VP2\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_2'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s3(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s3(\s|,)/i) || ($newLine =~ /RNA\scapping\s(protein|enzyme)\sVP3\s\(VP3\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_3'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s4(\s|,)/i))
+		    elsif($sortIt && (($newLine =~ /segment\s4(\s|,)/i) || ($newLine =~ /outer\scapsid\sspike\sprotein\sVP4\s\(VP4\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_4'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s5(\s|,)/i))
+		    elsif($sortIt && (($newLine =~ /segment\s5(\s|,)/i) || ($newLine =~ /non\-structural\sprotein\s1\s\(NSP1\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_5'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s6(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s6(\s|,)/i) || ($newLine =~ /inner\scapsid\sprotein\sVP6\s\(VP6\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_6'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s7(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s7(\s|,)/i) || ($newLine =~ /non\-structural\sprotein\s3\s\(NSP3\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_7'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s8(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s8(\s|,)/i) || ($newLine =~ /non\-structural\sprotein\s2\s\(NSP2\)\sgene/)))
 		    {
                         $RotavirusSegments{'segment_8'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s9(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s9(\s|,)/i) || ($newLine =~ /capsid\sglycoprotein\sVP7\s\(VP7\)\sgene/) || ($newLine =~ /outer\scapsid\sglycoprotein\sVP7\s\(VP7\)\sgene/) || ($newLine =~ /NSP3\sgene,/)))
 		    {
                         $RotavirusSegments{'segment_9'}{$line[14]}{$line[2]} = $newLine;
                     }
-		    elsif($sortIt && ($newLine =~ /segment\s10(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s10(\s|,)/i) || ($newLine =~ /non\-structural\sprotein\s4\s\(NSP4\)\sgene/)))
 		      {
 			  $RotavirusSegments{'segment_10'}{$line[14]}{$line[2]} = $newLine;
 		      }
-		    elsif($sortIt && ($newLine =~ /segment\s11(\s|,)/i))
+		    elsif($sortIt && ( ($newLine =~ /segment\s11(\s|,)/i) || ($newLine =~ /non\-structural\sprotein\s5\s\(NSP5\)\sand\snon-structural\sprotein\s6\s\(NSP6\)\sgenes/) ))
 		      {
 			  $RotavirusSegments{'segment_11'}{$line[14]}{$line[2]} = $newLine;
     	              }
@@ -273,7 +273,8 @@ if($rotavirus)
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
       my $i = 0;
-      
+      if( exists $RotavirusSegments{'segment_1'} )
+         {
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_1'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_1'}{$acc}} )
@@ -281,12 +282,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_1'}{$acc}{$aln};
 		}
 	    }
+	 }
+      else
+      {
+    	    print "Segment 1 not found.\n";	  
+      }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 2 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-     
+      if( exists $RotavirusSegments{'segment_2'} )
+       {		
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_2'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_2'}{$acc}} )
@@ -294,12 +301,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_2'}{$acc}{$aln};
 		}
 	    }
+       }
+      else
+	{
+    	    print "Segment 2 not found.\n";          
+	}
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 3 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-         
+      if( exists $RotavirusSegments{'segment_3'} )
+	    {
           foreach my $acc (sort keys %{ $RotavirusSegments{'segment_3'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_3'}{$acc}} )
@@ -307,12 +320,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_3'}{$acc}{$aln};
 		}
 	    }
+	    }
+      else
+	    {
+                 print "Segment 3 not found.\n"; 
+	    }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 4 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_4'} )
+	    {
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_4'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_4'}{$acc}} )
@@ -320,12 +339,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_4'}{$acc}{$aln};
 		}
 	    }
+	    }
+      else
+	    {
+       	       print "Segment 4 not found.\n";		
+	    }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 5 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_5'} )
+         {
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_5'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_5'}{$acc}} )
@@ -333,12 +358,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_5'}{$acc}{$aln};
 		}
 	    }
+         }
+      else
+        {
+    	    print "Segment 5 not found.\n";
+        }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 6 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_6'} )
+        {      
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_6'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_6'}{$acc}} )
@@ -346,12 +377,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_6'}{$acc}{$aln};
 		}
 	    }
+        }
+      else
+	    {
+              	print "Segment 6 not found.\n";
+	    }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 7 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_7'} )
+	{	
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_7'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_7'}{$acc}} )
@@ -359,12 +396,18 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_7'}{$acc}{$aln};
 		}
 	    }
+	}
+      else
+	  {
+              	print "Segment 7 not found.\n";
+	  }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 8 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_8'} )
+	    {
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_8'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_8'}{$acc}} )
@@ -372,18 +415,29 @@ if($rotavirus)
 		    print $RotavirusSegments{'segment_8'}{$acc}{$aln};
 		}
 	    }
+	    }
+      else
+	    {
+		print "Segment 8 not found.\n";
+	    }
       if($verbose)
         {
            print "\n<------- Search for Rotavirus Segment 9 ------->\n";
            print "QueryID\t%Ident.\tAlnLength\tMatchID\tMatchName\n";
 	}
-           
+      if( exists $RotavirusSegments{'segment_9'} )
+	    {
 	    foreach my $acc (sort keys %{ $RotavirusSegments{'segment_9'} })
 	    {
 		foreach my $aln (sort { $b <=> $a } keys %{ $RotavirusSegments{'segment_9'}{$acc}} )
 		{
 		    print $RotavirusSegments{'segment_9'}{$acc}{$aln};
 		}
+	    }
+	    }
+      else
+	    {
+		print "Segment 9 not found.\n";
 	    }
       if($verbose)
         {
