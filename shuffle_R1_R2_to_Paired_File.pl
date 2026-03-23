@@ -12,26 +12,59 @@ if(@ARGV != 3) {
 
 my ( $R1_File_Name, $R2_File_Name, $Paired_File_Name ) = @ARGV;
 
+# Validate forward reads .fastq file existence and/or nonzero length
+  if(!-e $R1_File_Name){
+     die "Error: Input file '$R1_File_Name' does not exist.\n";
+  }
+
+  if(!-e $R2_File_Name){
+     die "Error: Input file '$R2_File_Name' does not exist.\n";
+  }
+
+my $fileLength = -s $R1_File_Name;
+
+  if($fileLength == 0){
+     die "Error: Input file '$R1_File_Name' is 0-length and does not contain data.\n";
+  }
+
+ $fileLength = -s $R2_File_Name;
+
+ if($fileLength == 0){
+     die "Error: Input file '$R2_File_Name' is 0-length and does not contain data.\n";
+  }
+
 
 
 
 my $R1 = Bio::SeqIO->new(
      -format  => 'fastq',
-     -variant => 'illumina',
+     -variant => 'sanger',
      -file    => $R1_File_Name);
 
 my $R2 = Bio::SeqIO->new(
     -format  => 'fastq',
-    -variant => 'illumina',
+    -variant => 'sanger',
     -file    => $R2_File_Name);
 
 my $out = Bio::SeqIO->new(
     -format  => 'fastq',
-    -variant => 'illumina',
     -file    => ">$Paired_File_Name");
 
+  if(!-e $Paired_File_Name){
+     die "Error: Input file '$Paired_File_Name' does not exist.\n";
+  }
+
+
+#  $fileLength = -s $Paired_File_Name;
+#  if($fileLength == 0){
+#     die "Error: Input file '$Paired_File_Name' is 0-length and does not contain data.\n";
+#  }
+
+
 while(my $seqR1 = $R1->next_seq){
+    my $seqR2 = $R2->next_seq;
     $out->write_seq($seqR1);
+    $out->write_seq($seqR2);
   }
 
 exit;
