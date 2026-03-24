@@ -60,6 +60,20 @@ my $out = Bio::SeqIO->new(
 #     die "Error: Input file '$Paired_File_Name' is 0-length and does not contain data.\n";
 #  }
 
+my $reads_in_R1 = `wc -l < "$R1_File_Name"`;
+
+if($? != 0) {
+    warn "WARNING: Failed to run wc command on '$R1_File_Name'\n";
+}
+
+my $reads_in_R2 = `wc -l < "$R2_File_Name"`;
+
+if($? != 0) {
+    warn "WARNING: Failed to run wc command on '$R2_File_Name'\n";
+}
+
+printf "R1 read count: %i\n", $reads_in_R1 / 4;
+printf "R2 read count: %i\n", $reads_in_R2 / 4;
 
 while(my $seqR1 = $R1->next_seq){
     my $seqR2 = $R2->next_seq;
