@@ -1,5 +1,8 @@
 #!/usr/bin/perl
 
+## Bioperl-driven method for shuffling reads using filenames as positional arguments
+## WARNING: This script is slow for .fastq files exceeding 500,000 reads
+
 use Bio::SeqIO;
 use strict;
 use warnings;
@@ -72,8 +75,23 @@ if($? != 0) {
     warn "WARNING: Failed to run wc command on '$R2_File_Name'\n";
 }
 
-printf "R1 read count: %i\n", $reads_in_R1 / 4;
-printf "R2 read count: %i\n", $reads_in_R2 / 4;
+$reads_in_R1 = $reads_in_R1 / 4;
+$reads_in_R2 = $reads_in_R2 / 4; 
+
+printf "R1 read count: %i\n", $reads_in_R1;
+printf "R2 read count: %i\n", $reads_in_R2;
+
+if($reads_in_R1 != $reads_in_R2)
+  {
+      print "There are unpaired reads indicated by unequal read counts.\n";
+      print "Do you wish to continue anyway? (Y/n)";
+      my $response = <STDIN>;
+      chomp $response;
+       
+      if($response ne 'Y'){
+	  die "Aborting read shuffle operation.\n";
+      }
+  }
 
 while(my $seqR1 = $R1->next_seq){
     my $seqR2 = $R2->next_seq;
