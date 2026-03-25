@@ -30,13 +30,23 @@ my $fileLength = -s $R1_File_Name;
      die "Error: Input file '$R1_File_Name' is 0-length and does not contain data.\n";
   }
 
- $fileLength = -s $R2_File_Name;
+my $fileLength2 = -s $R2_File_Name;
 
- if($fileLength == 0){
+ if($fileLength2 == 0){
      die "Error: Input file '$R2_File_Name' is 0-length and does not contain data.\n";
   }
 
+ if(($fileLength + $fileLength2) > 1500000000){
+      print "Total size of files exceeds 1.5 GB.\n";
+      print "Are you sure you wish to continue? ";
+      my $response = <STDIN>;
+      chomp $response;
+      if($response ne 'Y'){
+	  die "Aborting read shuffle operation.\n";
+      }
 
+ }
+    
 
 
 my $R1 = Bio::SeqIO->new(
@@ -80,6 +90,9 @@ $reads_in_R2 = $reads_in_R2 / 4;
 
 printf "R1 read count: %i\n", $reads_in_R1;
 printf "R2 read count: %i\n", $reads_in_R2;
+
+
+
 
 if($reads_in_R1 != $reads_in_R2)
   {
