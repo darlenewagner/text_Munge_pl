@@ -51,27 +51,19 @@ my $fileLength2 = -s $R2_File_Name;
 
 my $R1 = Bio::SeqIO->new(
      -format  => 'fastq',
-    # -variant => 'illumina',
-     -file    => $R1_File_Name);
+     -file    => $R1_File_Name,
+     -verbose => -1,
+     -noclose => 1,
+     -streambased => 1);
 
 my $R2 = Bio::SeqIO->new(
     -format  => 'fastq',
-   # -variant => 'illumina',
-    -file    => $R2_File_Name);
+    -file    => $R2_File_Name,
+    -verbose => -1,
+    -noclose => 1,
+    -streambased => 1);
 
 open(OUT, '>', $Paired_File_Name) || die "Output file name $Paired_File_Name not provided $!";
-
-#my $out = Bio::SeqIO->new(
-#    -format  => 'fastq',
-#    -file    => ">$Paired_File_Name");
-#  if(!-e $Paired_File_Name){
-#     die "Error: Input file '$Paired_File_Name' does not exist.\n";
-#  }
-
-#  $fileLength = -s $Paired_File_Name;
-#  if($fileLength == 0){
-#     die "Error: Input file '$Paired_File_Name' is 0-length and does not contain data.\n";
-#  }
 
 my $reads_in_R1 = `wc -l < "$R1_File_Name"`;
 
@@ -79,11 +71,33 @@ if($? != 0) {
     warn "WARNING: Failed to run wc command on '$R1_File_Name'\n";
 }
 
+my $header_R1 = `head -1 "$R1_File_Name"`;
+
+my $strand_R1 = "1";
+
+if(scalar split(" ", $header_R1) > 1)
+ {
+     my @id_line = split(" ", $header_R1);
+     $strand_R1 = $id_line[1];
+ }
+
+
 my $reads_in_R2 = `wc -l < "$R2_File_Name"`;
 
 if($? != 0) {
     warn "WARNING: Failed to run wc command on '$R2_File_Name'\n";
 }
+
+my $header_R2 = `head -1 "$R2_File_Name"`;
+
+my $strand_R2 = "2";
+
+if(scalar split(" ", $header_R2) > 1)
+ {
+     my @id_line = split(" ", $header_R2);
+     $strand_R2 = $id_line[1];
+ }
+
 
 $reads_in_R1 = $reads_in_R1 / 4;
 $reads_in_R2 = $reads_in_R2 / 4; 
@@ -110,14 +124,14 @@ while(my $seqR1 = $R1->next_seq){
     my $seqR2 = $R2->next_seq;
 
     my $id = $seqR1->id;
-    my $strand = "1";
+    my $strand = $strand_R1;
     my $dna = $seqR1->seq;
     my $qual = join("", map{chr($_ + 33)} @{$seqR1->qual});
 
-    print OUT $id, " ", $strand, "\n", $dna, "\n+", $qual, "\n";
+    print OUT $id, " ", $strand, "\n", $dna, "\n+\n", $qual, "\n";
 
     $id = $seqR2->id;
-    $strand = "2";
+    $strand = $strand_R2;
     $dna = $seqR2->seq;
     $qual = join("", map{chr($_ + 33)} @{$seqR2->qual});
 

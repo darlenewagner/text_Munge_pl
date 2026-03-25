@@ -109,7 +109,7 @@ if($reads_in_R1 != $reads_in_R2)
 while(my $seqR1 = $R1->next_seq){
     my $seqR2 = $R2->next_seq;
     $out->write_seq($seqR1);
-    $out->write_seq($seqR2);
+   $out->write_seq($seqR2);
   }
 
 exit;
