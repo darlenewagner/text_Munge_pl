@@ -3,7 +3,7 @@
 ## Bioperl-driven method for shuffling reads using filenames as positional arguments
 ## WARNING: This script is slow for .fastq files exceeding 500,000 reads
 
-use Bio::SeqIO;
+use Bio::SeqIO::fastq;
 use strict;
 use warnings;
 
@@ -51,15 +51,15 @@ my $fileLength2 = -s $R2_File_Name;
 
 my $R1 = Bio::SeqIO->new(
      -format  => 'fastq',
-     -variant => 'sanger',
+    # -variant => 'illumina',
      -file    => $R1_File_Name);
 
 my $R2 = Bio::SeqIO->new(
     -format  => 'fastq',
-    -variant => 'sanger',
+   # -variant => 'illumina',
     -file    => $R2_File_Name);
 
-open(OUT, $Paired_File_Name) || die "Output file name $Paired_File_Name not provided $!";
+open(OUT, '>', $Paired_File_Name) || die "Output file name $Paired_File_Name not provided $!";
 
 #my $out = Bio::SeqIO->new(
 #    -format  => 'fastq',
@@ -106,11 +106,26 @@ if($reads_in_R1 != $reads_in_R2)
       }
   }
 
-while(my $seqR1 = $R1->next_dataset){
-    my $seqR2 = $R2->next_dataset;
+while(my $seqR1 = $R1->next_seq){
+    my $seqR2 = $R2->next_seq;
 
-   $out->write_seq($seqR1);
-   $out->write_seq($seqR2);
-  }
+    my $id = $seqR1->id;
+    my $strand = "1";
+    my $dna = $seqR1->seq;
+    my $qual = join("", map{chr($_ + 33)} @{$seqR1->qual});
+
+    print OUT $id, " ", $strand, "\n", $dna, "\n+", $qual, "\n";
+
+    $id = $seqR2->id;
+    $strand = "2";
+    $dna = $seqR2->seq;
+    $qual = join("", map{chr($_ + 33)} @{$seqR2->qual});
+
+    print OUT $id, " ", $strand, "\n", $dna, "\n+\n", $qual, "\n";
+
+}
+
+
+close(OUT);
 
 exit;
