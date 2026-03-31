@@ -5,9 +5,11 @@ use warnings;
 
 my $strand = '1:N:0:1';
 
-GetOptions(
-    'strand|s|=s' => \$strand,
+my $result = GetOptions(
+    'strand:s' => \$strand,
     ) or die "Error in command line option argument\n";
+
+#print $result, "\n";
 
 if($strand !~ /^(1|2)\:/)
 {
