@@ -24,6 +24,15 @@ my ( $R1_File_Name, $R2_File_Name, $Paired_File_Name ) = @ARGV;
      die "Error: Input file '$R2_File_Name' does not exist.\n";
   }
 
+  if(($R1_File_Name =~ /\.gz$/) || ($R2_File_Name =~ /\.gz$/))
+  {
+      my $new_R1 = `gunzip $R1_File_Name`;
+      my $new_R2 = `gunzip $R2_File_Name`;
+      $R1_File_Name = $new_R1;
+      $R2_File_Name = $new_R2;
+  } 
+
+
 my $fileLength = -s $R1_File_Name;
 
   if($fileLength == 0){
