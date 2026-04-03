@@ -6,6 +6,7 @@
 use Bio::SeqIO::fastq;
 use strict;
 use warnings;
+use IO::Uncompress::Gunzip qw(gunzip $GunzipError);
 
 # Shuffle reads from forward and reverse reads in .fastq
 # Validate that there are 2 input files and 1 output file
@@ -13,33 +14,57 @@ if(@ARGV != 3) {
     die "Usage: $0 Reads_R1_001.fastq Reads_R2_001.fastq Reads_Pairs.fastq\n";
 }
 
+my $gunzip_flag = 0;
+
 my ( $R1_File_Name, $R2_File_Name, $Paired_File_Name ) = @ARGV;
 
-# Validate forward reads .fastq file existence and/or nonzero length
-  if(!-e $R1_File_Name){
-     die "Error: Input file '$R1_File_Name' does not exist.\n";
-  }
-
-  if(!-e $R2_File_Name){
-     die "Error: Input file '$R2_File_Name' does not exist.\n";
-  }
+my $intermFile1 = '';
+my $intermFile2 = '';
 
   if(($R1_File_Name =~ /\.gz$/) || ($R2_File_Name =~ /\.gz$/))
   {
-      my $new_R1 = `gunzip $R1_File_Name`;
-      my $new_R2 = `gunzip $R2_File_Name`;
-      $R1_File_Name = $new_R1;
-      $R2_File_Name = $new_R2;
+      $intermFile1 = `gunzip $R1_File_Name`;
+      $intermFile2 = `gunzip $R2_File_Name`;
+      $gunzip_flag = 1;
+     # $R1_File_Name = $new_R1;
+     # $R2_File_Name = $new_R2;
   } 
 
+# Validate forward reads .fastq file existence and/or nonzero length
+  if((!-e $R1_File_Name) && ($gunzip_flag == 0)){
+     die "Error: Input file '$R1_File_Name' does not exist.\n";
+}
+elsif(!-e $intermFile1){
+     die "Error: Gunzipped input file '$intermFile1' does not exist.\n";
+}
 
-my $fileLength = -s $R1_File_Name;
+  if((!-e $R2_File_Name) && ($gunzip_flag == 0)){
+     die "Error: Input file '$R2_File_Name' does not exist.\n";
+}
+elsif(!-e $intermFile2){
+     die "Error: Gunzipped input file '$intermFile2' does not exist.\n";
+}
+
+my $fileLength = '';
+my $fileLength2 = '';
+ 
+if($gunzip_flag == 0){
+   $fileLength = -s $R1_File_Name;
+}
+else {
+   $fileLength = -s $intermFile1;
+}
 
   if($fileLength == 0){
      die "Error: Input file '$R1_File_Name' is 0-length and does not contain data.\n";
   }
 
-my $fileLength2 = -s $R2_File_Name;
+if($gunzip_flag == 0){
+   $fileLength2 = -s $R2_File_Name;
+}
+else {
+    $fileLength2 = -s $intermFile2;
+}
 
  if($fileLength2 == 0){
      die "Error: Input file '$R2_File_Name' is 0-length and does not contain data.\n";
@@ -55,8 +80,7 @@ my $fileLength2 = -s $R2_File_Name;
       }
 
  }
-    
-
+  
 
 my $R1 = Bio::SeqIO->new(
      -format  => 'fastq',
