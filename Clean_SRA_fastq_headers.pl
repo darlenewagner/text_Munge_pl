@@ -13,12 +13,12 @@ my $result = GetOptions(
 
 #print $result, "\n";
 
-if(($strand !~ /^(1|2)\:/) || ($strand !~ /^SINGLE/))
+if(($strand !~ /^(1|2)\:/) && ($strand !~ /^SINGLE/))
 {
     die "Error: The first integer in '--strand' argument must be 1 or 2\n";
 }
 
-if($strand !~ /^SINGLE/)
+if($strand =~ /^SINGLE/)
 {
     $singleEnd = 1;
 }
@@ -30,9 +30,13 @@ while(<STDIN>)
      {
 	my $ws = index($_, ' '); 
 	my $id = substr($_, 0, $ws);
-	if($singleEnd == 0){
+	if($singleEnd == 0)
+	{
 	    print $id, " ", $strand, "\n";
 	}
+	else{
+	    print $id, "\n";
+  	  }
      }
     elsif(($. % 4) == 3)
      {
