@@ -30,20 +30,39 @@ my $arrLength = scalar @sorted_numbers;
 
  if(($arrLength % 2) == 1){
     my $ii = int($arrLength / 2);  
-    print $sorted_numbers[$ii], "\n";
+    $median = $sorted_numbers[$ii];
 
-    
+    for(my $y = 0; $y < $ii; $y++){
+	push @lowerArray, $sorted_numbers[$y];
+    }
+
+    for(my $z = $ii + 1; $z < scalar @sorted_numbers; $z++){
+	push @upperArray, $sorted_numbers[$z];
+    }
     
    }
  else{
      my $jj = int($arrLength / 2);
      my $halfway = ($sorted_numbers[$jj - 1] + $sorted_numbers[$jj])*0.5;
-     print $halfway, "\n";
+     $median = $halfway;
+
+    for(my $y = 0; $y < $jj - 1; $y++){
+	push @lowerArray, $sorted_numbers[$y];
+    }
+
+    for(my $z = $jj + 1; $z < scalar @sorted_numbers; $z++){
+	push @upperArray, $sorted_numbers[$z];
+    }
 
      
     }
 
-#print "\n";
+  $lower = Statistics::Lite::median(@lowerArray);
+  $upper = Statistics::Lite::median(@upperArray);
+
+## Simple output.  Will add verbose output later.
+
+  print $lower, "\t", $median, "\t", $upper, "\n";
 
  
 
