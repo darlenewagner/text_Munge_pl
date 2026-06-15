@@ -70,7 +70,14 @@ if($reference)
              $sequence = $sequence.$Segments{$sortedKeys[$count]}."\n";
 	  }
       }
-    print $header, $sequence;
+    #print $header, $sequence;
+
+    print $header;
+    for(my $line = 0; $line < length($sequence); $line = $line + 60)
+      {
+        print substr($sequence, $line, 60), "\n";
+      }
+    
   }
 else
   {
