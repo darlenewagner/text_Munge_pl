@@ -6,11 +6,26 @@ use warnings;
 ## chomp nucleotide sequence lines and sort fasta records by links
 
 my $reference = '';
+my $help = '';
 
-## Say '--reference Y' to create a spliced Rotavirus genome reference
+## Say '--reference' to create a spliced Rotavirus genome reference
 GetOptions(
     'reference|r|' => \$reference,
+    'help|h|'      => \$help,
     ) or die "Error in command line option argument\n";
+
+if($help)
+{
+    print "\nsort_Rotavirus_segments.pl is a script for sorting a multifasta file of Rotavirus or Influenza segments descending order of length.\n";
+    print "INPUT is a single multifasta file as a commmand line argument. OUTPUT is a multifasta or single fasta file to STDOUT\n";
+    print "##########\n";
+    print "USAGE 1: Create a sorted multifasta from input multifasta -> \nsort_Rotavirus_segments.pl test_Rotavirus/Rotavirus_A_1976_G2P.4.fasta\n";
+    print "### or ###\n";
+    print "USAGE 2: Create a single fasta reference with 150-bp spacers separating segments ->\nsort_Rotavirus_segments.pl --reference test_Rotavirus/Rotavirus_A_1976_G2P.4.fasta\n";
+    print "##########\n\n";
+
+    die;
+}
 
 my $fasta = $ARGV[0];
 
@@ -80,7 +95,8 @@ if($reference)
     
   }
 else
-  {
+{
+    ## output sorted segments, longest to shortest, without concatenating or deleting fasta headers
   my $k = 0;    
   foreach(@sortedKeys)
    {
